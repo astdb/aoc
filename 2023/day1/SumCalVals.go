@@ -55,6 +55,7 @@ import (
 )
 
 func main() {
+	// open calibration document file
 	calibDocFile, err := os.Open(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
@@ -62,8 +63,10 @@ func main() {
 
 	defer calibDocFile.Close()
 
+	// sum of calibration values
 	cvSum := 0
 
+	// read through the calibration doc line by line, calculate the calibration value and update the sum
 	cdfScanner := bufio.NewScanner(calibDocFile)
 	for cdfScanner.Scan() {
 		cvSum += calibVal(cdfScanner.Text())
@@ -72,6 +75,7 @@ func main() {
 	fmt.Println(cvSum)
 }
 
+// calibVal accepts a calibration document entry and returns the associated calibration value
 func calibVal(cdfEntry string) int {
 	fd := 0
 	ld := 0
