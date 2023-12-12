@@ -29,6 +29,15 @@ Determine which games would have been possible if the bag had been loaded with o
 
 package main
 
+import (
+	"os"
+	"log"
+	"bufio"
+	"strings"
+	"strconv"
+	"fmt"
+)
+
 const (
 	red = 12
 	green = 13
@@ -49,14 +58,88 @@ func main() {
 
 	// read through the calibration doc line by line, calculate the calibration value and update the sum
 	gfScanner := bufio.NewScanner(gamesFile)
-	for cdfScanner.Scan() {
+	for gfScanner.Scan() {
 		// cvSum += calibVal(cdfScanner.Text())
+		gfRow := gfScanner.Text()
+		// fmt.Printf("<%s> (Game: %d)\n", gfRow, gameNum(gfRow))
+		_ = gameNum(gfRow)
+
+		// get a list of games associated with this row
+		_ = getGames(gfRow)
+
+		// check if there are any impossible games in this row
+
 	}
 
 	fmt.Println(gidSum)
 }
 
-// gameNum accepts a row from the games 
+func getGames(gfRow string) []*Game {
+	fmt.Printf("getGames(): gfRow: %s\n", gfRow)
+	games := []*Game{}
+
+	gfRowComps := strings.Split(gfRow, ":")
+	if len(gfRowComps) >= 2 {
+		gamesStr := gfRowComps[1]
+
+		gamesStrComps := strings.Split(gamesStr, ";")
+		for _, gameStr := range gamesStrComps {
+			gameComps := strings.Split(gameStr, ",")
+
+			gameTot := 0
+			thisGame := &Game{red: 0, blue: 0, green: 0, total: 0}
+
+			for _, gameComp := range gameComps {
+				colorCounts := strings.Split(gameComp, " ")
+
+				// thisGame := &Game{red: 0, blue: 0, green: 0, total: 0}
+				if len(colorCounts) >= 2 {
+					count, _ := strconv.Atoi(colorCounts[0])
+					color := strings.TrimSpace(colorCounts[1])
+
+					gameTot += count
+
+					if color == "blue" {
+						thisGame.blue = count
+					}
+
+					if color == "green" {
+						thisGame.green = count
+					}
+
+					if color == "red" {
+						thisGame.red = count
+					}
+				}
+			}
+
+			fmt.Printf("Red: %d / Green: %d / Blue: %d / Total: %d\n", thisGame.red, thisGame.green, thisGame.blue, thisGame.total)
+			games = append(games, thisGame)
+		}
+	}
+
+	return games
+}
+
+// gameNum accepts a row from the games file and returns the game number as an int
 func gameNum(gfRow string) int {
-	gfRowComps := strings.Split()
+	var gN int
+	gfRowComps := strings.Split(gfRow, ":")
+	if len(gfRowComps) >= 2 {
+		game := gfRowComps[0]
+
+		gameComps := strings.Split(game, " ")
+		if len(gameComps) >= 2 {
+			gN, _ = strconv.Atoi(gameComps[1])
+		}
+	}
+
+	return gN
+}
+
+type Game struct {
+	red int
+	blue int
+	green int
+	total int
 }
