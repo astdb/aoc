@@ -61,11 +61,16 @@ func main() {
 	for gfScanner.Scan() {
 		// cvSum += calibVal(cdfScanner.Text())
 		gfRow := gfScanner.Text()
-		// fmt.Printf("<%s> (Game: %d)\n", gfRow, gameNum(gfRow))
-		_ = gameNum(gfRow)
+		fmt.Printf("<%s> (Game: %d)\n", gfRow, gameNum(gfRow))
+		// _ = gameNum(gfRow)
 
 		// get a list of games associated with this row
-		_ = getGames(gfRow)
+		games := getGames(gfRow)
+		for _, game := range games {
+			if gamePossible(game) {
+				gidSum += gameNum(gfRow)
+			}
+		}
 
 		// check if there are any impossible games in this row
 
@@ -74,28 +79,46 @@ func main() {
 	fmt.Println(gidSum)
 }
 
+func gamePossible(game *Game) bool {
+	if game.red > red || game.blue > blue || game.green > green {
+		return false
+	}
+
+	if game.total > (red + blue + green) {
+		return false
+	}
+
+	return true
+}
+
 func getGames(gfRow string) []*Game {
-	fmt.Printf("getGames(): gfRow: %s\n", gfRow)
+	// fmt.Printf("getGames(): gfRow: %s\n", gfRow)
 	games := []*Game{}
 
 	gfRowComps := strings.Split(gfRow, ":")
+	// fmt.Printf("getGames(): gfRowComps: %v\n", gfRowComps)
 	if len(gfRowComps) >= 2 {
 		gamesStr := gfRowComps[1]
+		// fmt.Printf("getGames(): gamesStr: %s\n", gamesStr)
 
 		gamesStrComps := strings.Split(gamesStr, ";")
+		// fmt.Printf("getGames(): gamesStrComps: %v\n", gamesStrComps)
 		for _, gameStr := range gamesStrComps {
 			gameComps := strings.Split(gameStr, ",")
+			// fmt.Printf("getGames(): gameComps: %v\n", gameComps)
 
 			gameTot := 0
 			thisGame := &Game{red: 0, blue: 0, green: 0, total: 0}
 
 			for _, gameComp := range gameComps {
-				colorCounts := strings.Split(gameComp, " ")
+				colorCounts := strings.Split(strings.TrimSpace(gameComp), " ")
+				// fmt.Printf("getGames(): colorCounts: %v\n", colorCounts)	// [ 8 green]
 
 				// thisGame := &Game{red: 0, blue: 0, green: 0, total: 0}
 				if len(colorCounts) >= 2 {
 					count, _ := strconv.Atoi(colorCounts[0])
 					color := strings.TrimSpace(colorCounts[1])
+					// fmt.Printf("getGames(): count: %d / color: %s\n", count, color)
 
 					gameTot += count
 
@@ -113,7 +136,8 @@ func getGames(gfRow string) []*Game {
 				}
 			}
 
-			fmt.Printf("Red: %d / Green: %d / Blue: %d / Total: %d\n", thisGame.red, thisGame.green, thisGame.blue, thisGame.total)
+			thisGame.total = gameTot
+			// fmt.Printf("Red: %d / Green: %d / Blue: %d / Total: %d\n", thisGame.red, thisGame.green, thisGame.blue, thisGame.total)
 			games = append(games, thisGame)
 		}
 	}
