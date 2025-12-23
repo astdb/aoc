@@ -64,7 +64,7 @@ func main() {
 
 func getJoltage2(bank []int) int {
 	joltage := []int{}
-	toDrop := 3
+	toDrop := len(bank) - 12
 
 	start := 0
 	end := start + (toDrop + 1) 
