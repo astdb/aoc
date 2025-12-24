@@ -16,7 +16,6 @@ func main() {
 	fmt.Printf("Paper locations map: %v\n", paperLocations)
 
 	accessibleRolls := countAccessibleRolls(paperLocations)
-
 	fmt.Println(accessibleRolls)
 }
 
@@ -24,7 +23,7 @@ func countAccessibleRolls(rollLocations [][]rune) int {
 	accessibleRolls := 0
 	for row := 0; row < len(rollLocations); row++ {
 		for col := 0; col < len(rollLocations[row]); col++ {
-			if rollAccessible(row, col, rollLocations) {
+			if rollLocations[row][col] == '@' && rollAccessible(row, col, rollLocations) {
 				accessibleRolls++
 			}
 		}
@@ -96,6 +95,8 @@ func rollAccessible(row, col int, locs [][]rune) bool {
 
 		// row[col-1], row[col], row col[]
 	}
+
+	fmt.Printf("Row: %d / Col: %d / Adj Roll COunt: %d\n", row, col, totalAdjRolls)
 
 	return totalAdjRolls < 4
 }
