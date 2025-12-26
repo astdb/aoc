@@ -17,8 +17,20 @@ func main() {
 	}
 
 	freshRanges, ingIDs := processInput(os.Args[1])
-	fmt.Printf("FreshRanges: %v\n", freshRanges)
-	fmt.Printf("Ingredient IDs: %v\n", ingIDs)
+	// fmt.Printf("FreshRanges: %v\n", freshRanges)
+	// fmt.Printf("Ingredient IDs: %v\n", ingIDs)
+
+	freshCount := 0
+	for _, ingID := range ingIDs {
+		for _, freshRange := range freshRanges {
+			if len(freshRange) >= 2 && ingID >= freshRange[0] && ingID <= freshRange[1] {
+				freshCount++
+				break
+			}
+		}
+	}
+
+	fmt.Println(freshCount)
 }
 
 func processInput(filename string) ([][]int,[]int) {
