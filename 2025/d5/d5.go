@@ -16,21 +16,49 @@ func main() {
 		log.Fatal("Usage: ./d5 <inputfile>")
 	}
 
-	freshRanges, ingIDs := processInput(os.Args[1])
+
+	// freshRanges, ingIDs := processInput(os.Args[1])
 	// fmt.Printf("FreshRanges: %v\n", freshRanges)
 	// fmt.Printf("Ingredient IDs: %v\n", ingIDs)
 
-	freshCount := 0
-	for _, ingID := range ingIDs {
-		for _, freshRange := range freshRanges {
-			if len(freshRange) >= 2 && ingID >= freshRange[0] && ingID <= freshRange[1] {
-				freshCount++
-				break
+	// freshCount := 0
+	// for _, ingID := range ingIDs {
+	// 	for _, freshRange := range freshRanges {
+	// 		if len(freshRange) >= 2 && ingID >= freshRange[0] && ingID <= freshRange[1] {
+	// 			freshCount++
+	// 			break
+	// 		}
+	// 	}
+	// }
+
+	// fmt.Println(freshCount)
+
+	freshRanges, _ := processInput(os.Args[1])
+	// totalFreshIDCount := 0
+
+	// for part 2, we need to be aware of overlaps in numeric ranges.
+	// we work wih a number of ranges, which may or may not overlap. 
+	// we need to count the numbers within each range, and counted numbers need to be unique across ranges
+	// this means for each range, we need to be able to decide if there were overlaps with 
+
+	minLower := 0
+	maxUpper := 0
+	for i, freshRange := range freshRanges {
+		if i == 0 {
+			minLower = freshRange[0]
+			maxUpper = freshRange[1]
+		} else {
+			if freshRange[0] < minLower {
+				minLower = freshRange[0]
+			}
+
+			if freshRange[1] > maxUpper {
+				maxUpper = freshRange[1]
 			}
 		}
 	}
 
-	fmt.Println(freshCount)
+	fmt.Println((maxUpper - minLower) + 1)
 }
 
 func processInput(filename string) ([][]int,[]int) {
